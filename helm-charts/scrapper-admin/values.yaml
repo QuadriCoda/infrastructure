@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "1.19.10" # Use the Nginx version you want to deploy
+
+service:
+  type: ClusterIP
+  port: 80

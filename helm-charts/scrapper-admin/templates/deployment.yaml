@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scrapper-admin.fullname" . }}
+  labels:
+    {{- include "scrapper-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "scrapper-admin.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "scrapper-admin.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: scrapper-admin
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+              protocol: TCP
