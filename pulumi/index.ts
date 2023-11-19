@@ -1,25 +1,52 @@
 import * as k8s from '@pulumi/kubernetes';
 import * as pulumi from '@pulumi/pulumi';
+import * as aws from "@pulumi/aws";
 
-// Determine the current Pulumi stack (environment).
 const stack = pulumi.getStack();
 
-// Create a Kubernetes provider instance. If you need to specify a kubeconfig file,
-// you can do so by providing the file path directly in the 'kubeconfig' property.
+const awsProvider = new aws.Provider("quadricoda", {
+  profile: "quadricoda",
+  region: "eu-central-1",
+});
+
 const k8sProvider = new k8s.Provider('k8s-provider', {
-  // If your kubeconfig is not in the default location, you can specify the kubeconfig path like this:
   // kubeconfig: '/path/to/your/kubeconfig',
 });
 
-// Deploy the Nginx Helm chart from the helm-charts directory.
-const nginxChart = new k8s.helm.v3.Chart('scrapper-admin', {
-  path: 'helm-charts/scrapper-admin',
+// Create an ECR repository
+const repo = new aws.ecr.Repository(
+  "scrapper-admin-frontend", 
+  {
+    name: "scrapper-admin-frontend",
+    imageScanningConfiguration: {
+      scanOnPush: true
+    },
+    tags: {
+      Name: "ScrapperAdminFrontend",
+      Environment: stack,
+    }
+  }, 
+  { provider: awsProvider }
+);
+
+const scrapperAdminName = 'scrapper-admin';
+const scrapperAdminChart = new k8s.helm.v3.Chart(scrapperAdminName, {
+  path: `helm-charts/${scrapperAdminName}`,
 }, { provider: k8sProvider });
 
-// Apply the Kustomize configuration from the kustomize directory.
-const kustomizeConfig = new k8s.yaml.ConfigGroup('kustomize', {
-  files: [`kustomize/overlays/${stack}/kustomization.yaml`],
+const kustomizeConfigScrapperAdmin = new k8s.yaml.ConfigGroup('kustomize-scrapper-admin', {
+  files: [`kustomize/${scrapperAdminName}/overlays/${stack}/kustomization.yaml`],
 }, { provider: k8sProvider });
 
-// Export the name of the Nginx service.
-export const serviceName = nginxChart.getResource('v1/Service', 'scrapper-admin').metadata.name;
+const scrapperAdminFrontendName = 'scrapper-admin-frontend'
+const scrapperAdminFrontendChart = new k8s.helm.v3.Chart(scrapperAdminFrontendName, {
+  path: `helm-charts/${scrapperAdminFrontendName}`,
+}, { provider: k8sProvider });
+
+const kustomizeConfigScrapperAdminFrontend = new k8s.yaml.ConfigGroup('kustomize-scrapper-admin-frontend', {
+  files: [`kustomize/${scrapperAdminFrontendName}/overlays/${stack}/kustomization.yaml`],
+}, { provider: k8sProvider });
+
+
+export const scrapperAdminServiceName = scrapperAdminChart.getResource('v1/Service', scrapperAdminName).metadata.name;
+export const scrapperAdminFrontendServiceName = scrapperAdminFrontendChart.getResource('v1/Service', scrapperAdminFrontendName).metadata.name;
