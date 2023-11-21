@@ -45,3 +45,4 @@ jobs:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           KUBECONFIG: ${{ github.workspace }}/decoded-kubeconfig
           GITHUB_SHA: ${{ github.sha }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
