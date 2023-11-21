@@ -7,30 +7,10 @@ const kubeconfig = process.env.KUBECONFIG || "";
 
 const stack = pulumi.getStack();
 
-const awsProvider = new aws.Provider("quadricoda", {
-  profile: "quadricoda",
-  region: "eu-central-1",
-});
-
 const k8sProvider = new k8s.Provider('k8s-provider', {
   kubeconfig: kubeconfig,
 });
 
-// Create an ECR repository
-const repo = new aws.ecr.Repository(
-  "scrapper-admin-frontend", 
-  {
-    name: "scrapper-admin-frontend",
-    imageScanningConfiguration: {
-      scanOnPush: true
-    },
-    tags: {
-      Name: "ScrapperAdminFrontend",
-      Environment: stack,
-    }
-  }, 
-  { provider: awsProvider }
-);
 
 const scrapperAdminName = 'scrapper-admin';
 const scrapperAdminChart = new k8s.helm.v3.Chart(scrapperAdminName, {
