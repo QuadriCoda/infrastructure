@@ -3,7 +3,7 @@ name: Deploy using pulumi
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -15,10 +15,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '16'  # Set this to the node version you are using
 
       - name: Install dependencies
         run: npm install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1
