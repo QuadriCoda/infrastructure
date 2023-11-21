@@ -1,4 +1,4 @@
-name: Deploy to Minikube via ngrok
+name: Deploy using pulumi
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: dangg/quadridrona/dev
+          stack-name: dangg/quadricoda/dev
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           KUBECONFIG: ${{ github.workspace }}/decoded-kubeconfig
