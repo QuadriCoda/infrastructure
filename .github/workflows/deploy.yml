@@ -27,7 +27,6 @@ jobs:
         run: echo "${{ secrets.MINIKUBE_KUBECONFIG }}" | base64 -d > decoded-kubeconfig
 
       - name: Install dependencies
-        working-directory: ./pulumi
         run: npm install
 
       - name: Run Pulumi up
