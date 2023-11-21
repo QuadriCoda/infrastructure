@@ -1,3 +1,4 @@
 name: quadricoda
 runtime: nodejs
 description: A minimal Kubernetes TypeScript Pulumi program
+main: index.ts

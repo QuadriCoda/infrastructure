@@ -1,6 +1,6 @@
 {
     "name": "quadricoda",
-    "main": "pulumi/index.ts",
+    "main": "index.ts",
     "devDependencies": {
         "@types/node": "^16"
     },

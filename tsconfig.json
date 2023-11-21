@@ -13,6 +13,6 @@
         "forceConsistentCasingInFileNames": true
     },
     "files": [
-        "pulumi/index.ts"
+        "index.ts"
     ]
 }
